@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+#
+set -u -e -o pipefail
+
+action=$1
+shift
+
+case $action in
+  help)
+    bash_setup print_help $0
+    ;;
+
+  specs)
+    mix run specs/specs.exs || :
+    ;;
+
+  watch)
+    $0 specs
+    while read CHANGE
+    do
+      dir=$(echo "$CHANGE" | cut -d' ' -f 1)
+      op=$(echo "$CHANGE" | cut -d' ' -f 2)
+      file=$(echo "$CHANGE" | cut -d' ' -f 3)
+      path="${dir}$file"
+
+      if [[ "$path" == *bin/bin* ]]; then
+        echo -e "\n=== File change: $path. Re-running..."
+        break;
+      else
+        echo -e "\n=== File change: $path. Running tests..."
+      fi
+      $0 specs
+    done < <(inotifywait --quiet --monitor --event close_write  -r bin -r lib/ -r specs/ )
+
+    exec $0 $action $@
+    ;;
+
+  *)
+    echo "Unknown option: $action" 1>&2
+    exit 1
+    ;;
+
+esac

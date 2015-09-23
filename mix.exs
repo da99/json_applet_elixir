@@ -27,6 +27,8 @@ defmodule JsonApplet.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [
+      {:poison, "> 0.0.0"}
+    ]
   end
 end

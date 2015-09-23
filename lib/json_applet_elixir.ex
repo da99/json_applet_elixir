@@ -1,0 +1,2 @@
+defmodule JsonAppletElixir do
+end

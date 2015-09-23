@@ -1,4 +1,4 @@
-JsonAppletElixir
-================
+JsonApplet
+==========
 
 ** TODO: Add description **

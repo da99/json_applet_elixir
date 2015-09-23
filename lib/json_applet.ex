@@ -1,0 +1,2 @@
+defmodule JsonApplet do
+end

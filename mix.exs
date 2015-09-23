@@ -1,8 +1,8 @@
-defmodule JsonAppletElixir.Mixfile do
+defmodule JsonApplet.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :json_applet_elixir,
+    [app: :json_applet,
      version: "0.0.1",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,

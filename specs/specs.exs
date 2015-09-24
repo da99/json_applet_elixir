@@ -1,19 +1,41 @@
 json = File.read!("specs/specs.json")
         |> Poison.decode!
 
-funcs = []
-Enum.scan(json, 1, fn (meta, acc) ->
-  it       = meta["it"]
-  input    = meta["input"]
-  expected = meta["output"]
+funcs = %{
+  "sum" => fn(meta) ->
+    sum = Enum.reduce(meta.compile_args.(), 0, fn(v, acc) -> v + acc end)
+    Enum.into([sum], meta.stack)
+  end,
+  "repeat" => fn(meta) ->
+    0
+    meta.stack
+  end,
+  "echo" => fn(meta) ->
+    0
+    meta.stack
+  end,
+  "var" => fn(meta) ->
+    0
+    meta.stack
+  end,
+  "raw" => fn(meta) ->
+    0
+    meta.stack
+  end
+}
 
-  actual = JSON_Applet.run(input)
+Enum.each(Enum.with_index(json), fn ({meta, index}) ->
+  it          = meta["it"]
+  input       = meta["input"]
+  expected    = meta["output"]
+  human_index = index + 1
+
+  actual = JSON_Applet.run(input, funcs)
 
   if actual == expected do
-    IO.puts "#{IO.ANSI.green}#{acc}:#{IO.ANSI.reset} #{it}"
+    IO.puts "#{IO.ANSI.green}#{human_index}:#{IO.ANSI.reset} #{it}"
   else
-    IO.puts "#{IO.ANSI.bright}#{IO.ANSI.red}#{acc}: #{it}#{IO.ANSI.reset}"
-    IO.puts "#{inspect actual} #{IO.ANSI.bright}#{IO.ANSI.red}!=#{IO.ANSI.reset} #{inspect expected}"
+    IO.puts "#{IO.ANSI.bright}#{IO.ANSI.red}#{human_index}: #{it}#{IO.ANSI.reset}"
+    raise "#{IO.ANSI.bright}#{IO.ANSI.red}#{inspect actual} #{IO.ANSI.bright}#{IO.ANSI.red}!=#{IO.ANSI.reset} #{inspect expected}"
   end
-  acc + 1
 end)

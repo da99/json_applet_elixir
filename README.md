@@ -1,7 +1,7 @@
 JSON\_Applet
 ==========
 
-Elixir implentation of the JSON Applet specification to write
+It's an Elixir implentation of the JSON Applet specification to write
 pseudo-logic intended to be shared among different programs.
 
 Example: write your specs in JSON Applet, run them

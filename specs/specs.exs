@@ -4,23 +4,28 @@ json = File.read!("specs/specs.json")
 funcs = %{
   "sum" => fn(meta) ->
     sum = Enum.reduce(meta.compile_args.(), 0, fn(v, acc) -> v + acc end)
-    Enum.into([sum], meta.stack)
+    %{meta | :stack => Enum.into([sum], meta.stack)}
   end,
+
   "repeat" => fn(meta) ->
     0
-    meta.stack
+    meta
   end,
+
   "echo" => fn(meta) ->
-    0
-    meta.stack
+    args = meta.compile_args.()
+    %{meta | :stack => Enum.into(args, meta.stack)}
   end,
+
   "var" => fn(meta) ->
-    0
-    meta.stack
+    args = meta.compile_args.()
+    [name, val] = JSON_Applet.args!(args, 2)
+    %{meta | :stack => Enum.into([val], meta.stack), :vars => Map.put(meta.vars, name, val)}
   end,
+
   "raw" => fn(meta) ->
     0
-    meta.stack
+    meta
   end
 }
 

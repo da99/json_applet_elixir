@@ -17,23 +17,20 @@
   },
   {
     "it": "evaluates args w/o placing anything on the stack",
-    "input": ["var", ["n", 1], "echo", ["! n"]],
+    "input": ["var", ["n", 1], "echo", ["var", ["n"]]],
     "output": [1,1]
   },
   {
     "it": "runs functions w/blocks: [string, array, array]",
-    "input": ["repeat", ["2"], ["+", [1,3]]],
+    "input": [
+      "repeat", [2], ["sum", [1,3]]
+    ],
     "output": [4,4]
   },
   {
     "it": "fatally fails if array has no func name: [array]",
     "input": [[1,2]],
-    "output": {"error": "Func name not specified"}
-  },
-  {
-    "it": "evaluates strings starting with !: \"! obj.key\"",
-    "input": ["var", ["K", 5], "! name"],
-    "output": [5, 5]
+    "output": {"error": "Func name not specified for args: [1, 2]"}
   },
   {
     "it":     "has 'raw' defined as a function",
@@ -43,7 +40,7 @@
   {
     "it":     "evals values in objects: {\"key\": \"! key\"}",
     "input":  ["var", ["n", "2"], {"key": "! n"}],
-    "output": ["2", {"key": "! n"}]
+    "output": ["2", {"key": ["var","n"]}]
   },
   {
     "it":     "evals values in object keys: {\"! v\": 2}",

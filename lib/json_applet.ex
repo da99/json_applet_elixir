@@ -11,6 +11,14 @@ defmodule JSON_Applet do
     list
   end # === def args
 
+  def compile_block meta_func do
+    compile(%{meta_func.meta | :raw=>meta_func.raw_block, :stack=>[]}).stack
+  end
+
+  def compile_args meta_func do
+    compile(%{meta_func.meta | :raw=>meta_func.raw_args, :stack=>[]}).stack
+  end
+
   def args list, num do
     if num < 0 || num > Enum.count(list) do
       raise ArgumentError, message: "Out of bounds: #{num} for #{inspect list}"
@@ -20,12 +28,16 @@ defmodule JSON_Applet do
 
   defp compile meta do
 
+    head = List.first(meta.raw)
     # is it a function call?
     cond do
       Enum.empty?(meta.raw) ->
         meta
 
-      is_binary(List.first(meta.raw)) && is_list(Enum.at(meta.raw, 1)) ->
+      is_list(head) ->
+        {:error, "Func name not specified for args: #{inspect head}"}
+
+      is_binary(head) && is_list(Enum.at(meta.raw, 1)) ->
         [curr | curr_tail]  = meta.raw
         [raw_args | raw_args_tail] = curr_tail
 
@@ -45,14 +57,8 @@ defmodule JSON_Applet do
           stack:     meta.stack,
           vars:      meta.vars,
           raw_args:  raw_args,
-          raw_block: Enum.reverse(raw_block),
-          meta:      meta,
-          compile_args: fn() ->
-            compile(%{meta | :raw=>raw_args}).stack
-          end,
-          compile_block: fn() ->
-            raw_block
-          end
+          raw_block: raw_block,
+          meta:      meta
         }
 
         updated_meta = meta.funcs[curr].(meta_func)
@@ -74,7 +80,15 @@ defmodule JSON_Applet do
       true -> raise "Only String and List are allowed."
     end # === cond
 
-    compile(%{vars: %{}, raw: json, origin: json, funcs: funcs, stack: stack}).stack
+    result = compile(%{vars: %{}, raw: json, origin: json, funcs: funcs, stack: stack})
+    cond do
+      is_tuple(result) ->
+        result
+      is_map(result) ->
+        result.stack
+      true ->
+        raise "Programmer Error: Unknown return value: #{inspect result}"
+    end
   end # === def run raw
 
 end # === defmodule JSON_Applet

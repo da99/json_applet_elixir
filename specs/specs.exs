@@ -36,6 +36,9 @@ Enum.each(Enum.with_index(json), fn ({meta, index}) ->
     IO.puts "#{IO.ANSI.green}#{human_index}:#{IO.ANSI.reset} #{it}"
   else
     IO.puts "#{IO.ANSI.bright}#{IO.ANSI.red}#{human_index}: #{it}#{IO.ANSI.reset}"
-    raise "#{IO.ANSI.bright}#{IO.ANSI.red}#{inspect actual} #{IO.ANSI.bright}#{IO.ANSI.red}!=#{IO.ANSI.reset} #{inspect expected}"
+    space = String.duplicate(" ", 2 + String.length to_string(human_index))
+    IO.puts "#{space}#{IO.ANSI.bright}#{IO.ANSI.red}#{inspect actual} #{IO.ANSI.bright}#{IO.ANSI.red}!=#{IO.ANSI.reset} #{inspect expected}"
+
+    Process.exit self, "Test failed."
   end
 end)

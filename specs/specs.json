@@ -38,14 +38,17 @@
     "output": ["! name"]
   },
   {
-    "it":     "evals values in objects: {\"key\": \"! key\"}",
-    "input":  ["var", ["n", "2"], {"key": "! n"}],
-    "output": ["2", {"key": ["var","n"]}]
+    "it":     "has 'echo' defined as a function",
+    "input":  ["echo", [1,2,3]],
+    "output": [1,2,3]
   },
+
+  "desc", ["JSON_Applet.compile_object"],
+
   {
-    "it":     "evals values in object keys: {\"! v\": 2}",
-    "input":  ["var", ["v", "3"], {"! v": "! v"}],
-    "output": ["3", {"3":"3"}]
+    "it":     "evals and returns last stack val in strings: {key: \"^ var_name\"} => {key: val}",
+    "input":  {"key": "^ one_plus_two" },
+    "output": {"key": 3}
   }
 ]
 

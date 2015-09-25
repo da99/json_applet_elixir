@@ -1,11 +1,20 @@
+Note:
+============
+This project has been temporarily abandoned.
+It turns out I do not need it.
+
+
 JSON\_Applet
 ==========
 
-It's an Elixir implentation of the JSON Applet specification to write
-pseudo-logic intended to be shared among different programs.
+Helper functions to implement JSON Applets
+in Elixir.
 
-Example: write your specs in JSON Applet, run them
-if/when you change langs.
+How to use:
+==========
+
+Don't use this. I'm too lazy to write documentation.
+You would be happier to create your own.
 
 Tests:
 ==========

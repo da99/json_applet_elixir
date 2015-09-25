@@ -36,8 +36,7 @@ funcs = %{
   end,
 
   "raw" => fn(meta) ->
-    0
-    meta
+    %{meta | :stack => Enum.into(meta.raw_args, meta.stack)}
   end
 }
 
@@ -49,7 +48,10 @@ Enum.each(Enum.with_index(json), fn ({meta, index}) ->
 
   actual = JSON_Applet.run(input, funcs)
 
-  # === If we get a tuple, turn it into a JSON object.
+  # === If we get a tuple, turn it into a JSON object:
+  #       {"error": "msg"}
+  #     This way, we can compare an Elixir error
+  #     to a JSON spec expectation.
   if (is_tuple(actual)) do
     actual = Poison.decode!(Poison.encode!(Enum.into([actual], %{})))
   end
